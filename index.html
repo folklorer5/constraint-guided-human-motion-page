@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Constraint-Guided Human Motion Diffusion project page">
+  <meta name="theme-color" content="#ffffff">
+  <title>Constraint-Guided Human Motion Diffusion</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <h1>Constraint-Guided Human Motion Diffusion</h1>
+      <p class="subtitle">Phase-Aware Physical Artifact Reduction toward Long-Horizon Obstacle-Aware Generation</p>
+      <p class="authors"><a href="https://github.com/folklorer5">Qijun Feng</a></p>
+      <p class="supervisors">Supervisors: Prof. Shengling Shi &nbsp;·&nbsp; Dr. Kelvin Toonen</p>
+      <p class="affiliation">Delft Center for Systems and Control (DCSC) · Delft University of Technology</p>
+      <nav class="action-row" aria-label="Project links">
+        <span class="action disabled" title="Paper link will be added after publication">Paper <small>coming soon</small></span>
+        <a class="action" href="https://github.com/folklorer5/constraint-guided-human-motion-diffusion" target="_blank" rel="noopener">Code</a>
+        <a class="action light" href="#results">Results</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap teaser" aria-labelledby="teaser-title">
+      <h2 id="teaser-title" class="sr-only">Project teaser</h2>
+      <div class="video-shell featured">
+        <video autoplay muted loop playsinline controls preload="metadata" poster="assets/images/teaser.jpg">
+          <source src="assets/videos/teaser.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <p class="teaser-caption">A frozen Motion Diffusion Model is refined at sampling time with phase-aware geometric constraints, from local ground contact to multi-stair interaction and long-horizon composition.</p>
+    </section>
+
+    <section class="band">
+      <div class="wrap prose">
+        <h2>Abstract</h2>
+        <p>Human motion diffusion models can generate diverse and visually plausible motions, but their outputs do not inherently satisfy terrain-dependent geometric and contact requirements. This can leave ground penetration, floating feet, support drift, and lower-leg–terrain intersections even when the overall motion appears natural.</p>
+        <p>We introduce a unified sampling-time constraint framework for a pretrained Motion Diffusion Model (MDM). Differentiable geometric and phase-dependent constraints are evaluated on the predicted clean motion during reverse diffusion and incorporated through an augmented Lagrangian method (ALM), while the denoising model remains frozen. The framework progresses from generic ground-contact correction to phase-aware platform interaction, fixed-dimensional continuous multi-stair refinement, and long-horizon motion composition through temporal inpainting and consistent motion–terrain registration.</p>
+      </div>
+    </section>
+
+    <section class="wrap method" aria-labelledby="method-heading">
+      <h2 id="method-heading">Method at a Glance</h2>
+      <div class="method-flow">
+        <article>
+          <span class="number">1</span>
+          <h3>Frozen MDM prior</h3>
+          <p>Start from pretrained MDM and preserve the learned motion prior without retraining the denoiser.</p>
+        </article>
+        <span class="arrow" aria-hidden="true">→</span>
+        <article>
+          <span class="number">2</span>
+          <h3>Phase &amp; terrain</h3>
+          <p>Extract interaction timing and register support surfaces, platform boundaries, and stair edges.</p>
+        </article>
+        <span class="arrow" aria-hidden="true">→</span>
+        <article>
+          <span class="number">3</span>
+          <h3>ALM refinement</h3>
+          <p>Apply masked, bounded sampling-time corrections only where the active residuals require them.</p>
+        </article>
+        <span class="arrow" aria-hidden="true">→</span>
+        <article>
+          <span class="number">4</span>
+          <h3>Long-horizon assembly</h3>
+          <p>Connect verified short sequences with two-sided inpainting, spatial alignment, and local refinement.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="results" class="band results-band">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Qualitative results</p>
+          <h2>Generic Ground-Contact Correction</h2>
+          <p>Matched baseline-versus-ALM examples across different text-generated actions. The pooled generated-contact floating rate decreases from <strong>31.36%</strong> to <strong>3.10%</strong>, and all measured floor-penetration cases in the evaluated configurations are removed.</p>
+          <p class="indicator-note">Orange markers indicate foot floating during generated contact, green markers indicate valid ground contact, red markers indicate ground penetration, and blue markers indicate swing. The dark-blue horizontal plane represents the ground surface, while the solid orange line serves as a visual marker of the floating-height tolerance.</p>
+        </div>
+        <div class="grid three">
+          <figure class="media-card">
+            <video muted loop playsinline controls preload="metadata" poster="assets/images/generic_skip.jpg"><source src="assets/videos/generic_skip.mp4" type="video/mp4"></video>
+            <figcaption><strong>Skipping rope</strong><span>Baseline vs. ALM-guided refinement</span></figcaption>
+          </figure>
+          <figure class="media-card">
+            <video muted loop playsinline controls preload="metadata" poster="assets/images/generic_dance.jpg"><source src="assets/videos/generic_dance.mp4" type="video/mp4"></video>
+            <figcaption><strong>Dancing</strong><span>Baseline vs. ALM-guided refinement</span></figcaption>
+          </figure>
+          <figure class="media-card">
+            <video muted loop playsinline controls preload="metadata" poster="assets/images/generic_jog.jpg"><source src="assets/videos/generic_jog.mp4" type="video/mp4"></video>
+            <figcaption><strong>Jogging</strong><span>Baseline vs. ALM-guided refinement</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap result-section">
+      <div class="section-head">
+        <p class="eyebrow">Phase-aware terrain refinement</p>
+        <h2>Platform Interaction</h2>
+        <p>The same sampling-time framework activates clearance, landing, settled-contact, no-slip, release, and lower-leg–riser constraints according to the detected interaction phase.</p>
+      </div>
+      <figure class="media-card wide">
+        <video muted loop playsinline controls preload="metadata" poster="assets/images/platform_004701.jpg"><source src="assets/videos/platform_004701.mp4" type="video/mp4"></video>
+        <figcaption><strong>HumanML3D sequence 004701</strong><span>Matched baseline (left) and phase-aware ALM refinement (right). Red markers indicate detected platform penetration or shin/riser collision.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="band">
+      <div class="wrap result-section compact-top">
+        <div class="section-head">
+          <p class="eyebrow">Fixed-dimensional extension</p>
+          <h2>Continuous Multi-Stair Refinement</h2>
+          <p>Repeated stair edges are handled without allocating a new ALM residual block for every edge. In the evaluated 120-frame sequence with three successive risers, two of five stochastic refinements remove all 14 reference terrain-penetration frames; the remaining samples retain only sparse millimeter-scale penetration.</p>
+        </div>
+        <figure class="media-card wide">
+          <video muted loop playsinline controls preload="metadata" poster="assets/images/multistair_002129.jpg"><source src="assets/videos/multistair_002129.mp4" type="video/mp4"></video>
+          <figcaption><strong>HumanML3D sequence 002129</strong><span>Continuous stair ascent with fixed-dimensional phase-aware residual aggregation.</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="wrap result-section long-horizon">
+      <div class="section-head">
+        <p class="eyebrow">Beyond one MDM window</p>
+        <h2>Long-Horizon Motion Composition</h2>
+        <p>Two-sided temporal inpainting, spatial alignment, motion–terrain registration, and transition-local refinement extend corrected motion beyond MDM's 196-frame native window. The three evaluated routes contain 385–430 frames.</p>
+      </div>
+      <div class="grid routes">
+        <figure class="media-card">
+          <video muted loop playsinline controls preload="metadata" poster="assets/images/route_a.jpg"><source src="assets/videos/route_a.mp4" type="video/mp4"></video>
+          <figcaption><strong>Route A · 430 frames</strong><span>Three ascents followed by one descent.</span></figcaption>
+        </figure>
+        <figure class="media-card">
+          <video muted loop playsinline controls preload="metadata" poster="assets/images/route_b.jpg"><source src="assets/videos/route_b.mp4" type="video/mp4"></video>
+          <figcaption><strong>Route B · 407 frames</strong><span>Two ascent–descent cycles with level walking.</span></figcaption>
+        </figure>
+        <figure class="media-card">
+          <video muted loop playsinline controls preload="metadata" poster="assets/images/route_c.jpg"><source src="assets/videos/route_c.mp4" type="video/mp4"></video>
+          <figcaption><strong>Route C · 385 frames</strong><span>Mixed support-level transitions and intermediate walking.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="stats" aria-label="Long-horizon headline results">
+        <div><strong>0</strong><span>measured terrain-penetration frames<br>in all refined routes</span></div>
+        <div><strong>0</strong><span>sampled shin–riser collision frames<br>in all refined routes</span></div>
+        <div><strong>75.5–83.2%</strong><span>relative reduction in settled-contact<br>floating across Routes A–C</span></div>
+      </div>
+    </section>
+
+    <section class="band takeaway-band">
+      <div class="wrap prose takeaway">
+        <h2>Takeaway</h2>
+        <p>Within the evaluated kinematic setting, terrain-dependent geometric constraints can be introduced directly during sampling of a frozen human motion diffusion model. The framework substantially reduces the targeted contact and terrain-interaction artifacts while largely retaining the main motion structure and visual characteristics. The method remains a soft kinematic constraint approach and does not provide a hard guarantee of dynamic executability.</p>
+      </div>
+    </section>
+
+    <section class="wrap bib-section">
+      <h2>BibTeX</h2>
+      <div class="bibbox">
+        <button id="copyBib" type="button">Copy</button>
+        <pre id="bibtex">@misc{feng2026constraintguided,
+  title  = {Constraint-Guided Human Motion Diffusion: Phase-Aware Physical Artifact Reduction toward Long-Horizon Obstacle-Aware Generation},
+  author = {Qijun Feng},
+  year   = {2026},
+  note   = {Master's thesis, Delft University of Technology}
+}</pre>
+      </div>
+      <p class="small-note">The paper link and final citation can be updated after the thesis/paper is publicly available.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>Constraint-Guided Human Motion Diffusion</span>
+      <span>Built for the research project at Delft University of Technology.</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
